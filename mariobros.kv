@@ -1,0 +1,180 @@
+Manager:
+    Menu:
+        name: 'menu'
+    GameMario:
+        name: 'mario'
+    GameFuracao:
+        name: 'furacao'
+    GameOver:
+        name: 'gameOver'
+
+<MenuButton@Button>:
+    font_size: '50sp'
+    background_normal: 'images/retangulo.png'
+    background_down: 'images/retangulo-pressionado.png'
+    border: 90,90,90,90
+
+<Menu>:
+    BoxLayout:
+        canvas:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+                source: 'images/controle.png'
+        orientation: 'vertical'
+        padding: '200dp', '50dp'
+        spacing: '150dp'
+        Widget:
+        BoxLayout:
+            padding: '100dp'
+            spacing: '150dp'
+            MenuButton:
+                text: 'Mario'
+                on_release: app.root.current = 'mario'
+            MenuButton:
+                text: 'Fura-cao'
+                on_release: app.root.current = 'furacao'
+            MenuButton:
+                text: 'Exit'
+                on_release: app.stop()
+
+<Player>:
+    source: 'images/mario-luigi.jpg'
+
+<Star>:
+    source: 'images/estrela.jpg'
+
+<FuraCao>:
+    source: 'images/fura-cao.jpg'
+
+<HotDog>:
+    source: 'images/hot-dog.png'
+
+<Ervilha>:
+    source: 'images/ervilha.jpg'
+
+<GameMario>:
+    canvas:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'images/fundo-lava.png'
+    FloatLayout:
+        Label:
+            text: 'Pontos: '+str(int(root.score))
+            font_size: '70sp'
+            bold: True
+            size_hint_y: None
+            height: self.font_size
+            y: root.height*0.95-self.height
+        Player:
+            id: mario
+            allow_stretch: True
+            size_hint: None, None
+            size: root.height/10, root.height/10
+            x: root.width/20
+            y: root.height/2
+
+<GameFuracao>:
+    canvas:
+        Color:
+            rgba: 1,1,1,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'images/grama-arena.jpg'
+    FloatLayout:
+        Label:
+            text: 'Pontos: '+str(int(root.score))
+            font_size: '70sp'
+            color: 1, 0, 0, 1
+            bold: True
+            size_hint_y: None
+            height: self.font_size
+            y: root.height*0.95-self.height
+        FuraCao:
+            id: furacao
+            allow_stretch: True
+            size_hint: None, None
+            size: root.height/5, root.height/5
+            x: root.width/10
+            y: root.height/10
+
+
+<Obstacle>
+    canvas:
+        Color:
+            rgba: self.color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    size_hint: None, None
+    width: '100dp'
+
+<ObstacleHotDog>
+    canvas:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'images/cachorro-quente2.png'
+#            source: self.source
+    size_hint: None, None
+    width: '100dp'
+
+<ObstacleErvilha>
+    canvas:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'images/ervilhas2.png'
+    size_hint: None, None
+    width: '100dp'
+
+
+<GameOver>:
+    BoxLayout:
+        canvas:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+                source: 'images/game-over.png'
+        orientation: 'vertical'
+        padding: '600dp', '70dp'
+        spacing: '150dp'
+        Widget:
+            size_hint: None, None
+            size: root.height/10, root.height/10
+        MenuButton:
+            text: 'Voltar para o menu'
+            on_release: app.root.current = 'menu'
+        MenuButton:
+            text: 'Sair do jogo!'
+            on_release: app.stop()
+
+<GamePontuacao>:
+    BoxLayout:
+        canvas:
+            Color:
+                rgba: 1,1,1,1
+            Rectangle:
+                size: self.size
+                pos: self.pos
+                source: 'images/cap_campeao.jpg'
+        orientation: 'vertical'
+        padding: '600dp', '70dp'
+        spacing: '150dp'
+        Widget:
+            size_hint: None, None
+            size: root.height/10, root.height/10
+        MenuButton:
+            text: 'Voltar para o menu'
+            on_release: app.root.current = 'menu'
+        MenuButton:
+            text: 'Sair do jogo!'
+            on_release: app.stop()
