@@ -90,7 +90,8 @@ class GameFuracao(Screen):
 
     # pass
     def on_enter(self, *args):
-        Clock.schedule_interval(self.rain_items, 1 / 30)
+        Clock.schedule_interval(self.update, 1 / 30)
+        # Clock.schedule_interval(self.rain_items, 1)
         Clock.schedule_interval(self.put_obstacle, interval_obstacle)
 
     def on_pre_enter(self, *args):
@@ -104,9 +105,8 @@ class GameFuracao(Screen):
             self.game_over()
         elif self.ids.furacao.y < 0:
             self.ids.furacao.y = 0
-        elif self.rain_items():
-            # self.game_over()
-            pass
+        elif self.rain_items_update():
+            self.game_over()
 
     def game_over(self, *args):
         Clock.unschedule(self.update, 1 / 30)
@@ -175,10 +175,10 @@ class GameFuracao(Screen):
                 obstacle = ObstacleHotDog(x=position, y=self.height, height=obs_h, width=obs_w, id="hotdog")
             else:
                 obstacle = ObstacleErvilha(x=position, y=self.height, height=obs_h, width=obs_w, id="ervilha")
-            self.add_widget(obstacle, 3)
+            self.add_widget(obstacle, 2)
             self.obstacles.append(obstacle)
 
-    def collided(self, wid1, wid2):
+    def rain_collided(self, wid1, wid2):
         if wid2.x <= wid1.x + wid1.width and \
                 wid2.x + wid2.width >= wid1.x and \
                 wid2.y <= wid1.y + wid1.height and \
@@ -186,12 +186,24 @@ class GameFuracao(Screen):
             return True
         return False
 
-    def rain_items(self, *args):
+    def rain_items(self, item_obj):
+        collided = False
+        fura = self.ids.furacao
+        if self.rain_collided(fura, item_obj):
+            collided = True
+        # for obstacle in self.obstacles:
+        #     if self.rain_collided(self.ids.furacao, obstacle):
+        #         collided = True
+        #         break
+        return collided
+
+    def rain_items_update(self, *args):
         collided = False
         for obstacle in self.obstacles:
-            if self.collided(self.ids.furacao, obstacle):
-                collided = True
-                break
+            if self.rain_collided(self.ids.furacao, obstacle):
+                if obstacle.id == "ervilha":
+                    collided = True
+                    break
         return collided
 
 
@@ -238,11 +250,16 @@ class ObstacleHotDog(Widget):
         self.anim.start(self)
         self.gameScreen = App.get_running_app().root.get_screen('furacao')
 
-    def on_x(self, *args):
+    def on_y(self, *args):
         if self.gameScreen:
-            if self.x < self.gameScreen.ids.furacao.x and not self.scored:
-                self.gameScreen.score += 0.5
-                self.scored = True
+            fura = self.gameScreen.ids.furacao
+            y_fura = fura.y + self.gameScreen.ids.furacao.height * 1.1
+            if self.y <= y_fura and not self.scored:
+                if self.gameScreen.rain_items(self):
+                    tam = len(self.gameScreen.obstacles)
+                    # self.gameScreen.score += 1 / tam
+                    self.gameScreen.score += 1
+                    self.scored = True
 
     def vanish(self, *args):
         self.gameScreen.remove_widget(self)
@@ -260,11 +277,14 @@ class ObstacleErvilha(Widget):
         self.anim.start(self)
         self.gameScreen = App.get_running_app().root.get_screen('furacao')
 
-    def on_x(self, *args):
+    def on_y(self, *args):
         if self.gameScreen:
-            if self.x < self.gameScreen.ids.furacao.x and not self.scored:
-                self.gameScreen.score -= 0.5
-                self.scored = True
+            fura = self.gameScreen.ids.furacao
+            y_fura = fura.y + self.gameScreen.ids.furacao.height * 1.1
+            if self.y <= y_fura and not self.scored:
+                if self.gameScreen.rain_items(self):
+                    self.gameScreen.game_over()
+                    self.scored = True
 
     def vanish(self, *args):
         self.gameScreen.remove_widget(self)
